@@ -1,4 +1,16 @@
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using MessageWallMVC.Data;
+using MessageWallMVC.Areas.Identity.Data;
+
 var builder = WebApplication.CreateBuilder(args);
+var connectionString = builder.Configuration.GetConnectionString("MessageWallMVCContextConnection") ?? throw new InvalidOperationException("Connection string 'MessageWallMVCContextConnection' not found.");
+
+builder.Services.AddDbContext<MessageWallMVCContext>(options =>
+    options.UseSqlServer(connectionString));
+
+builder.Services.AddDefaultIdentity<MessageWallMVCUser>(options => options.SignIn.RequireConfirmedAccount = true)
+    .AddEntityFrameworkStores<MessageWallMVCContext>();
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
@@ -17,6 +29,7 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
+app.UseAuthentication();;
 
 app.UseAuthorization();
 
